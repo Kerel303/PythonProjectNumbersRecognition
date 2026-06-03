@@ -147,8 +147,17 @@ class Editor:
             self.recognize_callback(full_list)
 
     def teach(self):
+        full_list = []
+        for row in self.pixel_state:
+            row_list = []
+            for pixel in row:
+                if pixel == True:
+                    row_list.append(1)
+                else:
+                    row_list.append(0)
+            full_list.append(row_list)
         if self.teach_callback:
-            self.teach_callback()
+            self.teach_callback(full_list)
 
 
     def set_text(self, text):
