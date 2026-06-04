@@ -32,3 +32,10 @@ Dla zwiększenia celności liczbę powinno rysować się na środku wyznaczonej 
 Uruchom:
 
 python main.py
+
+
+
+# Dodatkowe informacje
+
+wykonanie pobrania danych na danych podstawowych: 0,6 sekundy
+wykonanie pełnego uczenia: około 80 sekund
