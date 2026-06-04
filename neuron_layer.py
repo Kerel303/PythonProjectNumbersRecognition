@@ -12,7 +12,7 @@ class NeuronLayer:
 
         self.classes = list(classes)
         self.input_size = input_size
-        self.learning_rate = 0.05
+        self.learning_rate = 0.01
 
         self.neurons = {}
 
@@ -22,7 +22,7 @@ class NeuronLayer:
 
     # Uczenie wszystkich neuronów w warstwie
     def train(self, data, epochs):
-        if data is None:
+        if not data:
             raise ValueError("Lista danych jest pusta")
         if len(data[0]) != self.input_size:
             raise ValueError("Zły rozmiar wektora wejściowego")
