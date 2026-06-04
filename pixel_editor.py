@@ -134,30 +134,46 @@ class Editor:
                 )
 
     def recognize(self):
-        full_list = []
+        flat_list = []
         for row in self.pixel_state:
-            row_list = []
             for pixel in row:
-                if pixel == True:
-                    row_list.append(1)
-                else:
-                    row_list.append(0)
-            full_list.append(row_list)
-        if self.recognize_callback:
-            self.recognize_callback(full_list)
+                flat_list.append(1 if pixel else 0)
+
+        self.recognize_callback(flat_list)
+
+        # full_list = []
+        # for row in self.pixel_state:
+        #     row_list = []
+        #     for pixel in row:
+        #         if pixel == True:
+        #             row_list.append(1)
+        #         else:
+        #             row_list.append(0)
+        #     full_list.append(row_list)
+        # if self.recognize_callback:
+        #     self.recognize_callback(full_list)
 
     def teach(self):
-        full_list = []
+
+        flat_list = []
         for row in self.pixel_state:
-            row_list = []
             for pixel in row:
-                if pixel == True:
-                    row_list.append(1)
-                else:
-                    row_list.append(0)
-            full_list.append(row_list)
-        if self.teach_callback:
-            self.teach_callback(full_list)
+                flat_list.append(1 if pixel else 0)
+
+        self.teach_callback(flat_list)
+
+
+        # full_list = []
+        # for row in self.pixel_state:
+        #     row_list = []
+        #     for pixel in row:
+        #         if pixel == True:
+        #             row_list.append(1)
+        #         else:
+        #             row_list.append(0)
+        #     full_list.append(row_list)
+        # if self.teach_callback:
+        #     self.teach_callback(full_list)
 
 
     def set_text(self, text):

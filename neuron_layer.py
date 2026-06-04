@@ -24,7 +24,7 @@ class NeuronLayer:
     def train(self, data, epochs):
         if data is None:
             raise ValueError("Lista danych jest pusta")
-        if len(data[0].get_input()) != self.input_size:
+        if len(data[0]) != self.input_size:
             raise ValueError("Zły rozmiar wektora wejściowego")
 
         for _ in range(epochs):
