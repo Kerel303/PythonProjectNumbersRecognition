@@ -1,6 +1,7 @@
 import random
 
 from neuron import Neuron
+from utils import sample_generator
 
 
 class NeuronLayer:
@@ -34,7 +35,7 @@ class NeuronLayer:
         shuffled = list(data)
         random.shuffle(shuffled)
 
-        for sample in shuffled:
+        for sample in sample_generator(shuffled): # używamy generatora
             x = sample.get_input()
             label = sample.get_label()
 
@@ -73,6 +74,7 @@ class NeuronLayer:
             clazz: neuron.predict(x)
             for clazz, neuron in self.neurons.items()
         }
+
 
     # Określenie dokładności
 

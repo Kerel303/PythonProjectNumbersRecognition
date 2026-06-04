@@ -5,7 +5,12 @@ import pixel_editor
 import neuron_layer
 import sample
 import random
-
+from exceptions import InvalidSampleError # własny wyjątek
+from utils import log_execution # wrapper
+from storage import save_model # serializacja do Json
+import re # regex w teach_callback / validate_label
+# generator jako sample_generator(sample) (używany w neuron_layer w teach_neurons)
+# lambda w recognize_callback()
 
 classes = [i for i in range(0, 10)]
 samples = []
@@ -18,7 +23,7 @@ test_data = []
 def create_network():
     print(f"Klasy: {classes}")
 
-
+@log_execution
 def get_data():
     global train_data, test_data
 
@@ -33,11 +38,7 @@ def get_data():
                 print(f"{i}-{j}:{data}")
                 vector = [int(x) for x in data.strip()]
                 if len(vector) != 1024:
-                    print(
-                        f"Błąd pliku {i}-{j}.txt "
-                        f"({len(vector)} zamiast 1024)"
-                    )
-                    continue
+                    raise InvalidSampleError(f"Zły rozmiar: {len(vector)}")
                 print(f"Vector: {vector}")
                 samples.append(sample.Sample(i, vector))
     random.shuffle(samples)
@@ -45,7 +46,7 @@ def get_data():
     train_data = samples[:split]
     test_data = samples[split:]
 
-
+@log_execution
 def train_network():
     print("Uczenie rozpoczęte")
     layer.train(train_data, epochs)
@@ -57,7 +58,7 @@ def train_network():
 
 def recognize_callback(data):
     sample_obj = sample.Sample(None, data)
-    editor.set_text(layer.classify(sample_obj))
+    # editor.set_text(layer.classify(sample_obj))
 
     # a potem do wypisania w konsoli
     results = layer.classify_all(sample_obj)
@@ -65,6 +66,10 @@ def recognize_callback(data):
     print("Wyniki neuronów: ")
     for digit, score in results.items():
         print(f"{digit}: {score:.4f}")
+
+    best = max(results.items(), key=lambda item: item[1])
+    print(f"Najlepszy wynik: {best[0]} ({best[1]:.4f})")
+    editor.set_text(f"{best[0]}")
 
 def teach_callback(data):
     # Otwiera okienko z prośbą o wpisanie liczby (od 0 do 9)
@@ -77,6 +82,9 @@ def teach_callback(data):
 
     # Sprawdzamy, czy użytkownik podał liczbę, czy kliknął "Cancel"
     if answer is not None:
+        if not validate_label(answer):
+            raise ValueError("Niepoprawny typ danych")
+
         editor.set_text(f"Zapisano jako: {answer}")
 
         # Tutaj dopiero stworzymy nowy plik do uczenia się w następnym odpaleniu programu
@@ -85,6 +93,9 @@ def teach_callback(data):
     else:
         editor.set_text("Anulowano uczenie")
 
+
+def validate_label(text):
+    return bool(re.fullmatch(r"[0-9]", str(text)))
 
 
 def create_file(class_of_sample, data):
@@ -101,6 +112,7 @@ if __name__ == '__main__':
     create_network()
     get_data()
     train_network()
+    save_model(layer)
 
     root = tk.Tk()
     editor = pixel_editor.Editor(root, recognize_callback=recognize_callback, teach_callback=teach_callback)
